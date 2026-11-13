@@ -8,6 +8,7 @@ libraries already certified, so nothing has to be recertified before use:
   `centaur/sv/vl/top` (VL, the Verilog front end), `centaur/vl/loader/top` (the VL
   Verilog reader, used with `oslib/ls`) and `centaur/fgl/top` (FGL, the SAT/AIG-based
   proof framework).
+- **Glucose** SAT solver, for FGL proofs and the IPASIR books.
 - **iverilog**, **verilator** and **yosys** for co-simulation and synthesis checks.
 
 Companion of [acl2-acl2r-docker](https://github.com/pcayuela/acl2-acl2r-docker), which
@@ -20,12 +21,18 @@ provides ACL2 8.7 and ACL2(r) 8.7 with arithmetic books.
 | ACL2 | `acl2/acl2` master, commit `4dbf21fe2bfc56b1bfa12a85f220726d658c1862` (a snapshot after 8.7) |
 | Lisp | SBCL 2.6.5, nursery of 200 MB per process (acl2/acl2#2098) |
 | Base | Ubuntu 24.04 |
-| Certified | `rtl/rel11/lib/top`, `centaur/sv/top`, `centaur/sv/vl/top`, `centaur/fgl/top`, `centaur/vl/loader/top`, `oslib/ls` (and their dependencies) |
+| Certified | `rtl/rel11/lib/top`, `centaur/sv/top`, `centaur/sv/vl/top`, `centaur/fgl/top`, `centaur/vl/loader/top`, `oslib/ls`, `centaur/ipasir/ipasir-backend`, `centaur/sv/tutorial/alu`, `centaur/sv/tutorial/boothpipe` (and their dependencies) |
 
-**Not included: an IPASIR SAT solver.** Centaur's `ipasir` books need a shared library
-(`IPASIR_SHARED_LIBRARY`, by default `libipasirglucose4.so`) that is not built here, so the
-Centaur SV tutorial books (`centaur/sv/tutorial/alu`, `sums`, `boothpipe`) do not certify
-in this image. Reading Verilog with VL, SV and FGL books work.
+**SAT solver.** The image includes **Glucose**, built from the authors' source (SHA-256
+checked in the Dockerfile): the `glucose` executable (4.1), which SATLINK and FGL call, and
+`libipasirglucose4.so` (from Glucose 4.0), which the IPASIR books use
+(`IPASIR_SHARED_LIBRARY` and `USER` are set). One deviation to know about: Centaur's glue
+code calls `setTermCallback` and `setLearnCallback`, which no public Glucose release
+provides. Both are optional in IPASIR, so the library is built from a patched copy of the
+glue in which they do nothing; the books themselves are not modified. Certified on top of
+that: `centaur/ipasir/ipasir-backend` and the SV tutorial examples `alu` and `boothpipe`.
+The tutorial book `centaur/sv/tutorial/sums` (old GL) does not certify here: it stops with a
+`DIVISION-BY-ZERO` signalled from Lisp, whose cause was not found.
 
 Certificates are tied to this exact ACL2 build, so books certified in another ACL2
 (even another snapshot of 8.7) are not reusable here, and vice versa.
