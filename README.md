@@ -4,7 +4,7 @@ A Docker image with a recent **ACL2** (plain, not ACL2(r)) and the hardware-veri
 libraries already certified, so nothing has to be recertified before use:
 
 - **RTL** books (`rtl/rel11/lib/top`), the Russinoff floating-point / arithmetic library.
-- **Centaur** books: `centaur/sv/top` (SV, SystemVerilog-oriented hardware model),
+- **Centaur** books: `centaur/sv/top` (SV, Centaur's hardware-verification library),
   `centaur/sv/vl/top` (VL, the Verilog front end), `centaur/vl/loader/top` (the VL
   Verilog reader, used with `oslib/ls`) and `centaur/fgl/top` (FGL, the SAT/AIG-based
   proof framework).
